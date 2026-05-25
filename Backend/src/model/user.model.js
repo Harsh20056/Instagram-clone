@@ -1,4 +1,6 @@
 const { default: mongoose } = require("mongoose");
+const jwt= require('jsonwebtoken')
+const bcrypt= require("bcrypt")
 
 const userSchema = new mongoose.Schema(
   {
@@ -26,7 +28,7 @@ const userSchema = new mongoose.Schema(
       maxlength: 10,
       // we are not using required : true here because instagram works without mobile number
     },
-    passwork: {
+    password: {
       type: String,
       required: true,
       minlength: 6,
@@ -60,6 +62,30 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+userSchema.pre("save", async function(next){
+  if(!this.isModified("password")){
+    return next();
+  }
+   try {
+    this.password = await bcrypt.hash(this.password, 10);
+    next()
+  } catch (error) {
+    console.log("error in pre method", error);
+    next(error)
+  }
+})
+
+userSchema.methods.generateJWT=async function(){
+  let token =await jwt.sign({id: this.id}, process.env.JWT_SECRET_KEY, {expiresIn : '1h'})
+  return token
+}
+
+
+userSchema.methods.comparePassword = async function (password) {
+  let checkPass = await bcrypt.compare(password, this.password);
+  return checkPass;
+};
 
 const UserModel = mongoose.model("users", userSchema);
 
