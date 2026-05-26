@@ -16,9 +16,7 @@ let registerController = asyncHandler(async (req, res, next) => {
   let isExisted = await UserModel.findOne({ username });
 
   if (isExisted) {
-    return next(
-      new ApiError(409, "User is already registered with this username"),
-    );
+    return next(new ApiError(409, "User is already registered with this username"));
   }
 
   let hashPass = await bcrypt.hash(password, 10);
@@ -130,8 +128,9 @@ const resetPasswordController = asyncHandler(async (req, res, next) => {
     return next(new ApiError(400, "Invalid request"));
   }
 
+  let decode;
   try {
-    const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
     // ...use decoded
   } catch (err) {
     // err contains the JWT error (e.g., TokenExpiredError, JsonWebTokenError)
@@ -150,10 +149,29 @@ const resetPasswordController = asyncHandler(async (req, res, next) => {
   return res.render("reset.ejs", { id: user._id });
 });
 
+let changePasswordController = asyncHandler(async (req, res, next) => {
+  let userId = req.params.userId;
+  let { password } = req.body;
+  if (!userId || !password) {
+    return next(new ApiError(400, "Invalid request"));
+  }
+  let hashPass = await bcrypt.hash(password, 10);
+  let user = await UserModel.findByIdAndUpdate(
+    userId,
+    { password: hashPass },
+    { new: true },
+  );
+  if (!user) {
+    return next(new ApiError(404, "User not found"));
+  }
+  return res.status(200).json(new ApiResponse("Password changed successfully"));
+});
+
 module.exports = {
   registerController,
   loginController,
   updatePasswordController,
   resetPasswordController,
   forgetPasswordController,
+  changePasswordController,
 };

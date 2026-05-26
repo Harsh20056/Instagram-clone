@@ -10,8 +10,9 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
     return next(new ApiError(404, "Unauthorized token"));
   }
 
+  let decode;
   try {
-    const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
     // ...use decoded
   } catch (err) {
     // err contains the JWT error (e.g., TokenExpiredError, JsonWebTokenError)

@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const jwt= require('jsonwebtoken')
-const bcrypt= require("bcrypt")
+const bcrypt= require("bcrypt");
+const ApiError = require("../utils/apiError");
 
 const userSchema = new mongoose.Schema(
   {
@@ -63,21 +64,20 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-userSchema.pre("save", async function(next){
+userSchema.pre("save", async function(){
   if(!this.isModified("password")){
-    return next();
+    return 
   }
    try {
     this.password = await bcrypt.hash(this.password, 10);
-    next()
   } catch (error) {
     console.log("error in pre method", error);
-    next(error)
+    throw new ApiError(400, error.message)
   }
 })
 
 userSchema.methods.generateJWT=async function(){
-  let token =await jwt.sign({id: this.id}, process.env.JWT_SECRET_KEY, {expiresIn : '1h'})
+  let token = jwt.sign({id: this._id}, process.env.JWT_SECRET_KEY, {expiresIn : '1h'})
   return token
 }
 

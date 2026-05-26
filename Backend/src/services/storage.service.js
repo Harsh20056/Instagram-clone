@@ -1,4 +1,5 @@
 let ImageKit = require("imagekit");
+const ApiError = require("../utils/apiError");
 
 let storageInstance = new ImageKit({
   publicKey: process.env.IK_PUB_KEY,
@@ -16,7 +17,8 @@ let sendToIK = async (file, fileName) => {
 
     return await storageInstance.upload(options);
   } catch (error) {
-    console.log("error in upload funtion", error);
+    console.log("error in upload function", error);
+    throw new ApiError(400, error.message);
   }
 };
 

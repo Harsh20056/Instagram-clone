@@ -10,7 +10,7 @@ let transporter = nodemailer.createTransport({
 
 let sentMailTo = async (to, subject, html) => {
   let option = {
-    from: process.env.EMAIL,
+    from: process.env.SMTP_USER,
     to,
     subject,
     html,
