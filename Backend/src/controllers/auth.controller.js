@@ -19,14 +19,13 @@ let registerController = asyncHandler(async (req, res, next) => {
     return next(new ApiError(409, "User is already registered with this username"));
   }
 
-  let hashPass = await bcrypt.hash(password, 10);
-
+  // Don't hash password here - the pre("save") hook in the model will do it
   let newUser = await UserModel.create({
     name,
     username,
     mobile,
     email,
-    password: hashPass,
+    password, // Pass plain password - model will hash it
   });
 
   let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET_KEY, {
@@ -35,9 +34,13 @@ let registerController = asyncHandler(async (req, res, next) => {
 
   res.cookie("token", token);
 
+  // Remove password from response
+  const userResponse = newUser.toObject();
+  delete userResponse.password;
+
   return res
     .status(201)
-    .json(new ApiResponse("User is registered successfully", newUser));
+    .json(new ApiResponse("User is registered successfully", userResponse));
 });
 
 let loginController = asyncHandler(async (req, res, next) => {
@@ -167,9 +170,15 @@ let changePasswordController = asyncHandler(async (req, res, next) => {
   return res.status(200).json(new ApiResponse("Password changed successfully"));
 });
 
+let logoutController = asyncHandler(async (req, res, next) => {
+  res.clearCookie("token");
+  return res.status(200).json(new ApiResponse("User logged out successfully"));
+});
+
 module.exports = {
   registerController,
   loginController,
+  logoutController,
   updatePasswordController,
   resetPasswordController,
   forgetPasswordController,

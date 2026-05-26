@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth.routes");
 const postRoutes = require("./routes/post.routes");
@@ -11,6 +12,12 @@ const path = require("path");
 connectDB();
 
 const app = express();
+
+// CORS configuration for frontend
+app.use(cors({
+  origin: "http://localhost:5173", // Frontend URL
+  credentials: true
+}));
 
 // path.join is used to join the path 
 // express.static tells the express that all static files in the public folder

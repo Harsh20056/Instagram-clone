@@ -10,6 +10,7 @@ const {
   getUserFollowingsController,
 } = require("../controllers/user.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
+const upload = require("../config/multer");
 
 let router = express.Router();
 
@@ -20,8 +21,8 @@ router.get("/follow/:followerId", authMiddleware, followUnfollowController);
 router.get("/profile", authMiddleware, getUserProfileController); // Current user profile
 router.get("/profile/:userId", getUserProfileController); // Other user's profile
 
-// Update user profile (requires auth)
-router.put("/profile", authMiddleware, updateUserProfileController);
+// Update user profile (requires auth) - with optional profile picture upload
+router.put("/profile", authMiddleware, upload.single("profilePicture"), updateUserProfileController);
 
 // Get user's posts
 router.get("/posts", authMiddleware, getUserPostsController); // Current user's posts

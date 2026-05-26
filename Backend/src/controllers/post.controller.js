@@ -30,7 +30,7 @@ let createPostController = asyncHandler(async (req, res, next) => {
     let newPost = await PostModel.create({
       user_id: req.user._id,
       caption,
-      imageUrl: uploadedImages.map((elem) => elem.url),
+      images: uploadedImages.map((elem) => elem.url),
     });
 
     // Add post to user's posts array
@@ -52,7 +52,10 @@ let createPostController = asyncHandler(async (req, res, next) => {
 });
 
 let getAllPostController = asyncHandler(async (req, res, next) => {
-  let allPosts = await PostModel.find().populate("likes");
+  let allPosts = await PostModel.find()
+    .populate("user_id", "username name profilePicture")
+    .populate("likes")
+    .sort({ createdAt: -1 });
 
   return res
     .status(200)
@@ -86,8 +89,9 @@ let likesController = asyncHandler(async (req, res, next) => {
     return next(new ApiError(404, "Post not found"));
   }
 
+  let updatedPost;
   if (post.likes.includes(req.user._id)) {
-    await PostModel.findByIdAndUpdate(
+    updatedPost = await PostModel.findByIdAndUpdate(
       postId,
       {
         $pull: { likes: req.user._id },
@@ -95,9 +99,9 @@ let likesController = asyncHandler(async (req, res, next) => {
       {
         new: true,
       },
-    );
+    ).populate("user_id", "username name profilePicture");
   } else {
-    await PostModel.findByIdAndUpdate(
+    updatedPost = await PostModel.findByIdAndUpdate(
       postId,
       {
         $push: { likes: req.user._id },
@@ -105,10 +109,10 @@ let likesController = asyncHandler(async (req, res, next) => {
       {
         new: true,
       },
-    );
+    ).populate("user_id", "username name profilePicture");
   }
 
-  return res.status(200).json(new ApiResponse("Like updated successfully"));
+  return res.status(200).json(new ApiResponse("Like updated successfully", updatedPost));
 });
 
 module.exports = {

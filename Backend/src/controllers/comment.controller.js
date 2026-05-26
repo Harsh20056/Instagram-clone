@@ -52,7 +52,7 @@ let getPostCommentsController = asyncHandler(async (req, res, next) => {
   }
 
   let comments = await CommentModel.find({ post_id: postId })
-    .populate("user_id", "username name")
+    .populate("user_id", "username name profilePicture")
     .sort({ createdAt: -1 });
 
   return res

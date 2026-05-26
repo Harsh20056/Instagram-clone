@@ -84,6 +84,17 @@ let updateUserProfileController = asyncHandler(async (req, res, next) => {
   if (mobile) updateData.mobile = mobile;
   if (username) updateData.username = username;
 
+  // Handle profile picture upload if file is provided
+  if (req.file) {
+    const sendToIK = require("../services/storage.service");
+    try {
+      const uploadedImage = await sendToIK(req.file.buffer, req.file.originalname);
+      updateData.profilePicture = uploadedImage.url;
+    } catch (error) {
+      return next(new ApiError(500, "Failed to upload profile picture: " + error.message));
+    }
+  }
+
   if (Object.keys(updateData).length === 0) {
     return next(new ApiError(400, "No data provided for update"));
   }
@@ -155,7 +166,7 @@ let searchUsersController = asyncHandler(async (req, res, next) => {
       { name: { $regex: query, $options: "i" } },
     ],
   })
-    .select("username name followers followings")
+    .select("username name profilePicture followers followings")
     .limit(20);
 
   return res
@@ -171,7 +182,7 @@ let getSuggestedUsersController = asyncHandler(async (req, res, next) => {
   let suggestedUsers = await UserModel.find({
     _id: { $ne: currentUserId, $nin: currentUser.followings },
   })
-    .select("username name followers followings")
+    .select("username name profilePicture followers followings")
     .limit(10)
     .sort({ followers: -1 }); // Sort by most followers first
 
@@ -189,7 +200,7 @@ let getUserFollowersController = asyncHandler(async (req, res, next) => {
 
   let user = await UserModel.findById(userId).populate({
     path: "followers",
-    select: "username name",
+    select: "username name profilePicture",
   });
 
   if (!user) {
@@ -210,7 +221,7 @@ let getUserFollowingsController = asyncHandler(async (req, res, next) => {
 
   let user = await UserModel.findById(userId).populate({
     path: "followings",
-    select: "username name",
+    select: "username name profilePicture",
   });
 
   if (!user) {

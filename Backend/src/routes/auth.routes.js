@@ -2,6 +2,7 @@ const express = require("express");
 const {
   registerController,
   loginController,
+  logoutController,
   updatePasswordController,
   resetPasswordController,
   forgetPasswordController,
@@ -13,6 +14,7 @@ const router = express.Router();
 
 router.post("/register", registerController);
 router.post("/login", loginController);
+router.post("/logout", logoutController);
 router.post("/forget-password", forgetPasswordController);
 router.post("/update-password/:userId", authMiddleware, updatePasswordController);
 router.post("/change-password/:userId", changePasswordController);

@@ -7,15 +7,13 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
   let token = req.cookies.token;
 
   if (!token) {
-    return next(new ApiError(404, "Unauthorized token"));
+    return next(new ApiError(401, "Unauthorized - No token provided"));
   }
 
   let decode;
   try {
     decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    // ...use decoded
   } catch (err) {
-    // err contains the JWT error (e.g., TokenExpiredError, JsonWebTokenError)
     return next(new ApiError(401, "Invalid or expired token"));
   }
 
