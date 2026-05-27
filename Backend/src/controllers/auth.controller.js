@@ -32,7 +32,12 @@ let registerController = asyncHandler(async (req, res, next) => {
     expiresIn: "1h",
   });
 
-  res.cookie("token", token);
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 3600000, // 1 hour
+  });
 
   // Remove password from response
   const userResponse = newUser.toObject();
@@ -64,7 +69,12 @@ let loginController = asyncHandler(async (req, res, next) => {
 
   let token = await user.generateJWT();
 
-  res.cookie("token", token);
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 3600000, // 1 hour
+  });
 
   const loggedInUser = user.toObject();
   delete loggedInUser.password;

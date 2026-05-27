@@ -13,10 +13,35 @@ connectDB();
 
 const app = express();
 
-// CORS configuration for frontend
+// CORS configuration for frontend - support multiple origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://instagram-clone-pi-roan.vercel.app",
+  // Add your production Vercel URL from environment variable
+  process.env.FRONTEND_URL,
+].filter(Boolean); // Remove undefined values
+
 app.use(cors({
-  origin: `${process.env.FRONTEND_URL}`, // Frontend URL
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman, or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Check if the origin matches any allowed origin or is a Vercel preview deployment
+    const isAllowed = allowedOrigins.some(allowedOrigin => origin === allowedOrigin) ||
+                      origin.includes('.vercel.app'); // Allow all Vercel preview deployments
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  exposedHeaders: ['Set-Cookie'],
 }));
 
 // path.join is used to join the path 
