@@ -8,7 +8,7 @@ import {
   deleteComment,
 } from "../../features/comments/commentActions";
 import { toggleLikePost } from "../../features/posts/postActions";
-import { FiX, FiHeart, FiTrash2, FiMessageCircle, FiSend, FiBookmark, FiSmile, FiMoreHorizontal } from "react-icons/fi";
+import { FiX, FiHeart, FiTrash2, FiMessageCircle, FiSend, FiBookmark, FiSmile, FiMoreHorizontal, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import { getProfilePicture } from "../../utils/profilePicture";
 import LikesModal from "./LikesModal";
@@ -20,6 +20,23 @@ const CommentSection = ({ post, onClose }) => {
   const comments = useSelector((state) => state.comments.comments[post._id] || []);
   const [likedComments, setLikedComments] = useState({});
   const [showLikesList, setShowLikesList] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const images = post?.images || [];
+
+  const nextImage = () => {
+    if (images.length <= 1) return;
+    setCurrentImageIndex((prev) =>
+      prev === images.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const prevImage = () => {
+    if (images.length <= 1) return;
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? images.length - 1 : prev - 1
+    );
+  };
 
   const isLiked = post.likes?.some((like) => {
     const likeId = like && typeof like === "object" ? (like._id || like.id) : like;
@@ -69,12 +86,44 @@ const CommentSection = ({ post, onClose }) => {
       <div className="bg-white max-w-[1000px] w-full h-[85vh] md:h-[80vh] flex flex-col md:flex-row overflow-hidden shadow-2xl rounded-r-lg rounded-l-none md:rounded-l-lg md:rounded-r-lg relative">
         
         {/* Left Side: Image Container */}
-        <div className="md:w-[58%] h-1/2 md:h-full bg-black flex items-center justify-center relative">
+        <div className="md:w-[58%] h-1/2 md:h-full bg-black flex items-center justify-center relative group/carousel">
           <img
-            src={post.images[0]}
+            src={images[currentImageIndex] || ""}
             alt="Post Image"
             className="w-full h-full object-contain"
           />
+
+          {images.length > 1 && (
+            <>
+              {/* Back button */}
+              <button
+                onClick={prevImage}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 text-gray-800 shadow-md rounded-full p-2 hover:bg-white active:scale-95 transition-all cursor-pointer z-10"
+              >
+                <FiChevronLeft size={20} strokeWidth={2.5} />
+              </button>
+
+              {/* Next button */}
+              <button
+                onClick={nextImage}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 text-gray-800 shadow-md rounded-full p-2 hover:bg-white active:scale-95 transition-all cursor-pointer z-10"
+              >
+                <FiChevronRight size={20} strokeWidth={2.5} />
+              </button>
+
+              {/* Dots Indicator */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/45 backdrop-blur-[2px] px-3 py-2 rounded-full z-10">
+                {images.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-[6.5px] h-[6.5px] rounded-full transition-all duration-200 ${
+                      index === currentImageIndex ? "bg-[#0095f6] scale-110" : "bg-white/60"
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
 
           {/* Tagged Overlay Button bottom left */}
           <div className="absolute bottom-4 left-4 bg-black/60 rounded-full p-2.5 text-white hover:bg-black/80 transition-colors cursor-pointer select-none">
