@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create Axios Instance
 const api = axios.create({
-  baseURL: "http://localhost:3000", // Target backend server port
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000", // Dynamically read from env with fallback
   timeout: 15000,
   withCredentials: true, // Crucial for sending and receiving HTTP-Only cookies (token)
   headers: {

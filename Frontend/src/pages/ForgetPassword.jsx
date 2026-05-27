@@ -32,7 +32,7 @@ const ForgetPassword = () => {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 text-black font-sans px-4 antialiased">
       <div className="w-full max-w-[396px] flex flex-col">
-        
+
         {/* Header Icon & Title */}
         <div className="flex flex-col items-start mb-5 w-full">
           {/* Subtle Padlock Icon */}
@@ -59,7 +59,7 @@ const ForgetPassword = () => {
                 A password reset link has been dispatched to your email address.
               </p>
             </div>
-            
+
             <Link
               to="/login"
               className="w-full block text-center border border-gray-300 bg-white hover:bg-gray-50 font-semibold text-black rounded-full py-2.5 text-[15px] transition-colors"
@@ -89,11 +89,10 @@ const ForgetPassword = () => {
             <Button
               type="submit"
               disabled={isButtonDisabled}
-              className={`w-full text-white text-base font-bold rounded-full py-3 mt-2 transition-all duration-200 ${
-                isButtonDisabled 
-                  ? "bg-blue-300 text-white/70 cursor-not-allowed" 
+              className={`w-full text-white text-base font-bold rounded-full py-3 mt-2 transition-all duration-200 ${isButtonDisabled
+                  ? "bg-blue-300 text-white/70 cursor-not-allowed"
                   : "bg-[#0095f6] hover:bg-[#0081d6] cursor-pointer"
-              }`}
+                }`}
             >
               {loading ? "Sending..." : "Send reset link"}
             </Button>
@@ -127,7 +126,7 @@ const ForgetPassword = () => {
         {/* Brand Meta Vector Footer */}
         <div className="flex items-center justify-center gap-1.5 mt-12 text-gray-500 text-xs font-medium tracking-wide">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-80">
-            <path d="M16.5 6c-1.8 0-3.3 1-4.5 2.4C10.8 7 9.3 6 7.5 6 4.5 6 2 8.5 2 11.5S4.5 17 7.5 17c1.8 0 3.3-1 4.5-2.4 1.2 1.4 2.7 2.4 4.5 2.4 3 0 5.5-2.5 5.5-5.5S19.5 6 16.5 6zm0 9c-1.7 0-3.1-1.1-4-2.5 1-1.4 2.3-2.5 4-2.5 1.9 0 3.5 1.6 3.5 3.5s-1.6 3.5-3.5 3.5zm-9 0C5.6 15 4 13.4 4 11.5S5.6 8 7.5 8c1.7 0 3.1 1.1 4 2.5-1 1.4-2.3 2.5-4 2.5z"/>
+            <path d="M16.5 6c-1.8 0-3.3 1-4.5 2.4C10.8 7 9.3 6 7.5 6 4.5 6 2 8.5 2 11.5S4.5 17 7.5 17c1.8 0 3.3-1 4.5-2.4 1.2 1.4 2.7 2.4 4.5 2.4 3 0 5.5-2.5 5.5-5.5S19.5 6 16.5 6zm0 9c-1.7 0-3.1-1.1-4-2.5 1-1.4 2.3-2.5 4-2.5 1.9 0 3.5 1.6 3.5 3.5s-1.6 3.5-3.5 3.5zm-9 0C5.6 15 4 13.4 4 11.5S5.6 8 7.5 8c1.7 0 3.1 1.1 4 2.5-1 1.4-2.3 2.5-4 2.5z" />
           </svg>
           Meta
         </div>

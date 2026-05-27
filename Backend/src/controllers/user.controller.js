@@ -25,6 +25,7 @@ let followUnfollowController = asyncHandler(async (req, res, next) => {
 
   const isFollowing = targetUser.followers.includes(currentUserId);
 
+  let updatedTargetUser;
   if (isFollowing) {
     // Unfollow: Remove from target user's followers and current user's followings
     await Promise.all([
@@ -35,6 +36,7 @@ let followUnfollowController = asyncHandler(async (req, res, next) => {
         $pull: { followings: targetUserId },
       }),
     ]);
+    updatedTargetUser = await UserModel.findById(targetUserId);
   } else {
     // Follow: Add to target user's followers and current user's followings
     await Promise.all([
@@ -45,10 +47,12 @@ let followUnfollowController = asyncHandler(async (req, res, next) => {
         $push: { followings: targetUserId },
       }),
     ]);
+    updatedTargetUser = await UserModel.findById(targetUserId);
   }
 
   return res.status(200).json(new ApiResponse(
-    isFollowing ? "Unfollowed successfully" : "Followed successfully"
+    isFollowing ? "Unfollowed successfully" : "Followed successfully",
+    updatedTargetUser
   ));
 });
 
@@ -145,7 +149,8 @@ let getUserPostsController = asyncHandler(async (req, res, next) => {
   }
 
   let posts = await PostModel.find({ user_id: userId })
-    .populate("user_id", "username name")
+    .populate("user_id", "username name profilePicture")
+    .populate("likes")
     .sort({ createdAt: -1 });
 
   return res

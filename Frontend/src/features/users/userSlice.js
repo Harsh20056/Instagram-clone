@@ -9,6 +9,7 @@ import {
   fetchFollowings,
   fetchUserPosts,
 } from "./userActions";
+import { toggleLikePost } from "../posts/postActions";
 
 const initialState = {
   userProfile: null,
@@ -85,6 +86,13 @@ const userSlice = createSlice({
       // Fetch User Posts
       .addCase(fetchUserPosts.fulfilled, (state, action) => {
         state.userPosts = action.payload;
+      })
+      // Toggle Like Post (keep profile posts in sync when liked/unliked)
+      .addCase(toggleLikePost.fulfilled, (state, action) => {
+        const post = state.userPosts.find(p => p._id === action.payload._id);
+        if (post) {
+          post.likes = action.payload.likes;
+        }
       });
   },
 });

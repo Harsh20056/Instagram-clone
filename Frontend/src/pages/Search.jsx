@@ -32,7 +32,7 @@ const Search = () => {
     <div className="min-h-screen w-full bg-white text-black font-sans antialiased">
       {/* Container aligned with Instagram's fixed sidebar exploration flow */}
       <div className="max-w-[400px] mx-auto lg:mx-0 min-h-screen border-r border-gray-200 bg-white px-4 pt-6 pb-4 flex flex-col">
-        
+
         {/* Component Header Title */}
         <h1 className="text-[24px] font-bold px-2 mb-8 tracking-wide text-black">
           Search
@@ -51,9 +51,9 @@ const Search = () => {
               autoFocus
             />
             {query.length > 0 && (
-              <button 
-                type="button" 
-                onClick={handleClear} 
+              <button
+                type="button"
+                onClick={handleClear}
                 className="text-gray-500 hover:text-gray-700 transition-colors shrink-0"
               >
                 <IoMdCloseCircle size={18} />

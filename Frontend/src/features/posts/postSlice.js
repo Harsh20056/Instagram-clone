@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchFeedPosts, createPost, toggleLikePost, fetchSinglePost } from "./postActions";
+import { toggleFollowUser } from "../users/userActions";
 
 const initialState = {
   feedPosts: [],
@@ -61,6 +62,18 @@ const postSlice = createSlice({
       // Fetch Single Post
       .addCase(fetchSinglePost.fulfilled, (state, action) => {
         state.selectedPost = action.payload;
+      })
+      // Toggle Follow User (keep author followers array in sync across all feed posts)
+      .addCase(toggleFollowUser.fulfilled, (state, action) => {
+        const { userId, followers } = action.payload;
+        state.feedPosts.forEach((post) => {
+          if (post.user_id && post.user_id._id === userId) {
+            post.user_id.followers = followers;
+          }
+        });
+        if (state.selectedPost && state.selectedPost.user_id && state.selectedPost.user_id._id === userId) {
+          state.selectedPost.user_id.followers = followers;
+        }
       });
   },
 });

@@ -74,7 +74,7 @@ export const toggleFollowUser = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       const response = await api.get(`/api/users/follow/${userId}`);
-      return { userId, followers: response.data.data.followers };
+      return { userId, followers: response.data.data?.followers || [] };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to toggle follow"

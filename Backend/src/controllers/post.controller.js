@@ -99,7 +99,9 @@ let likesController = asyncHandler(async (req, res, next) => {
       {
         new: true,
       },
-    ).populate("user_id", "username name profilePicture");
+    )
+      .populate("user_id", "username name profilePicture")
+      .populate("likes");
   } else {
     updatedPost = await PostModel.findByIdAndUpdate(
       postId,
@@ -109,7 +111,9 @@ let likesController = asyncHandler(async (req, res, next) => {
       {
         new: true,
       },
-    ).populate("user_id", "username name profilePicture");
+    )
+      .populate("user_id", "username name profilePicture")
+      .populate("likes");
   }
 
   return res.status(200).json(new ApiResponse("Like updated successfully", updatedPost));

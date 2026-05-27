@@ -15,7 +15,7 @@ const CreatePostModal = ({ onClose }) => {
 
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files);
-    
+
     if (files.length > 5) {
       setError("You can only upload up to 5 images");
       return;
@@ -30,10 +30,10 @@ const CreatePostModal = ({ onClose }) => {
     });
 
     setSelectedFiles(validFiles);
-    
+
     const previewUrls = validFiles.map((file) => URL.createObjectURL(file));
     setPreviews(previewUrls);
-    
+
     if (validFiles.length > 0) {
       setStep(2);
       setError("");
@@ -48,11 +48,11 @@ const CreatePostModal = ({ onClose }) => {
 
     setLoading(true);
     const formData = new FormData();
-    
+
     selectedFiles.forEach((file) => {
       formData.append("images", file);
     });
-    
+
     if (caption) {
       formData.append("caption", caption);
     }
